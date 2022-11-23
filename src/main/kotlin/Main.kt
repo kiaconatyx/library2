@@ -1,27 +1,27 @@
+import utils.ScannerInput
 import java.lang.System.exit
-import java.util.*
 
-val scanner = Scanner(System.`in`)
+
+
 
 fun main(args: Array<String>) {
     runMenu()
 }
 
 fun mainMenu() : Int {
-    print("""
-          ----------------------------------
-          |        NOTE KEEPER APP         |
-          ----------------------------------
-          | NOTE MENU                      |
-          |   1) Add a Book                |
-          |   2) List all Books            |
-          |   3) Update a Book             |
-          |   4) Delete a Book             |
-          ----------------------------------
-          |   0) Exit                      |
-          ----------------------------------
+    return ScannerInput.readNextInt(""" 
+         > ----------------------------------
+         > |        NOTE KEEPER APP         |
+         > ----------------------------------
+         > | NOTE MENU                      |
+         > |   1) Add a Book                |
+         > |   2) List all Books            |
+         > |   3) Update a Book             |
+         > |   4) Delete a Book             |
+         > ----------------------------------
+         > |   0) Exit                      |
+         > ----------------------------------
          > ==>> """.trimMargin(">"))
-    return scanner.nextInt()
 }
 
 fun runMenu() {
