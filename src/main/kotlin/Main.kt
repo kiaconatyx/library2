@@ -8,19 +8,19 @@ fun main(args: Array<String>) {
 }
 
 fun mainMenu() : Int {
-    println("")
-    println("--------------------")
-    println("Library APP")
-    println("--------------------")
-    println("Library MENU")
-    println("  1) Add a book")
-    println("  2) List all books")
-    println("  3) Update a book")
-    println("  4) Delete a book")
-    println("--------------------")
-    println("  0) Exit")
-    println("--------------------")
-    print("==>> ")
+    print("""
+          ----------------------------------
+          |        NOTE KEEPER APP         |
+          ----------------------------------
+          | NOTE MENU                      |
+          |   1) Add a Book                |
+          |   2) List all Books            |
+          |   3) Update a Book             |
+          |   4) Delete a Book             |
+          ----------------------------------
+          |   0) Exit                      |
+          ----------------------------------
+         > ==>> """.trimMargin(">"))
     return scanner.nextInt()
 }
 
@@ -33,7 +33,7 @@ fun runMenu() {
             3  -> updateBook()
             4  -> deleteBook()
             0  -> exitApp()
-            else -> println("Invalid option entered: " + option)
+            else -> println("Invalid option entered: ${option}")
         }
     } while (true)
 }
