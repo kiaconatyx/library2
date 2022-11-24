@@ -1,8 +1,13 @@
+import controllers.BookAPI
+import models.Book
 import mu.KotlinLogging
 import utils.ScannerInput
+import utils.ScannerInput.readNextInt
+import utils.ScannerInput.readNextLine
 import java.lang.System.exit
 
 private val logger = KotlinLogging.logger {}
+private val bookAPI = BookAPI()
 
 
 fun main(args: Array<String>) {
@@ -40,11 +45,23 @@ fun runMenu() {
 }
 
 fun addBook(){
-    logger.info { "addBook() function invoked" }
+    //logger.info { "addNote() function invoked" }
+    val bookTitle = readNextLine("Enter a title for the book: ")
+    val bookPriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+    val bookISBN = readNextInt("Enter book ISBN ")
+    val bookGenre = readNextLine("Enter a genre for the book: ")
+    val isAdded = bookAPI.add(Book(bookTitle,bookISBN, bookPriority, bookGenre, false))
+
+    if (isAdded) {
+        println("Added Successfully")
+    } else {
+        println("Add Failed")
+    }
 }
 
 fun listBooks(){
-    logger.info { "listBooks() function invoked" }
+    //logger.info { "listBooks() function invoked" }
+    println(bookAPI.listAllBooks())
 }
 
 fun updateBook(){
