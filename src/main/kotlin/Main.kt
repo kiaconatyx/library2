@@ -7,8 +7,7 @@ import utils.ScannerInput.readNextLine
 import java.lang.System.exit
 
 private val logger = KotlinLogging.logger {}
-private val bookAPI = BookAPI()
-
+private val BookAPI = BookAPI()
 
 fun main(args: Array<String>) {
     runMenu()
@@ -17,13 +16,13 @@ fun main(args: Array<String>) {
 fun mainMenu() : Int {
     return ScannerInput.readNextInt(""" 
          > ----------------------------------
-         > |        NOTE KEEPER APP         |
+         > |        Book Depositry APP      |
          > ----------------------------------
          > | NOTE MENU                      |
-         > |   1) Add a Book                |
-         > |   2) List all Books            |
-         > |   3) Update a Book             |
-         > |   4) Delete a Book             |
+         > |   1) Add a book                |
+         > |   2) List all books            |
+         > |   3) Update a book             |
+         > |   4) Delete a book             |
          > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
@@ -45,12 +44,11 @@ fun runMenu() {
 }
 
 fun addBook(){
-    //logger.info { "addNote() function invoked" }
     val bookTitle = readNextLine("Enter a title for the book: ")
     val bookPriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
-    val bookISBN = readNextInt("Enter book ISBN ")
-    val bookGenre = readNextLine("Enter a genre for the book: ")
-    val isAdded = bookAPI.add(Book(bookTitle,bookISBN, bookPriority, bookGenre, false))
+    val bookISBN = readNextInt("Enter a value ")
+    val bookGenre = readNextLine("Enter a category for the note: ")
+    val isAdded = BookAPI.add(Book(bookTitle, bookPriority, bookISBN, bookGenre, false))
 
     if (isAdded) {
         println("Added Successfully")
@@ -60,8 +58,7 @@ fun addBook(){
 }
 
 fun listBooks(){
-    //logger.info { "listBooks() function invoked" }
-    println(bookAPI.listAllBooks())
+    println(BookAPI.listAllBooks())
 }
 
 fun updateBook(){
@@ -73,7 +70,6 @@ fun deleteBook(){
 }
 
 fun exitApp(){
-    println("Exiting...bye")
+    logger.info { "exitApp() function invoked" }
     exit(0)
 }
-
