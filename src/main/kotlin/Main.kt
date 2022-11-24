@@ -66,7 +66,16 @@ fun updateBook(){
 }
 
 fun deleteBook(){
-    logger.info { "deleteBook() function invoked" }
+    listBooks()
+    if (BookAPI.numberOfBooks() > 0) {
+        val indexToDelete = readNextInt("Enter the index of the book to delete: ")
+        val bookToDelete = BookAPI.deleteBook(indexToDelete)
+        if (bookToDelete != null) {
+            println("Delete Successful! Deleted book: ${bookToDelete.bookTitle}")
+        } else {
+            println("Delete NOT Successful")
+        }
+    }
 }
 
 fun exitApp(){
