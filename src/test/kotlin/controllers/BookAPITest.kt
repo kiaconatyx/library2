@@ -2,29 +2,23 @@ package controllers
 
 
 
-
 import models.Book
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import kotlin.test.assertEquals
 
 class BookAPITest {
-
 
     private var learnKotlin: Book? = null
     private var music: Book? = null
     private var codeApp: Book? = null
     private var bio: Book? = null
-
     private var fantasy: Book? = null
-
     private var populatedBooks: BookAPI? = BookAPI()
     private var emptyBooks: BookAPI? = BookAPI()
 
     @BeforeEach
     fun setup(){
-
         learnKotlin = Book("Learning Kotlin", 5, 2333, "howto", false)
         music = Book("How To Play Guitar", 1, 22, "music", true)
         codeApp = Book("Coding 101", 4, 222, "tech", false)
@@ -36,10 +30,7 @@ class BookAPITest {
         populatedBooks!!.add(music!!)
         populatedBooks!!.add(codeApp!!)
         populatedBooks!!.add(bio!!)
-
         populatedBooks!!.add(fantasy!!)
-
-
     }
 
     @AfterEach
@@ -48,13 +39,29 @@ class BookAPITest {
         music = null
         codeApp = null
         bio = null
-
         fantasy = null
         populatedBooks = null
         emptyBooks = null
     }
+    @Nested
+    inner class DeleteBooks {
 
+        @Test
+        fun `deleting a Book that does not exist, returns null`() {
+            assertNull(emptyBooks!!.deleteBook(0))
+            assertNull(populatedBooks!!.deleteBook(-1))
+            assertNull(populatedBooks!!.deleteBook(5))
+        }
 
+        @Test
+        fun `deleting a book that exists delete and returns deleted object`() {
+            assertEquals(5, populatedBooks!!.numberOfBooks())
+            assertEquals(music, populatedBooks!!.deleteBook(4))
+            assertEquals(4, populatedBooks!!.numberOfBooks())
+            assertEquals(learnKotlin, populatedBooks!!.deleteBook(0))
+            assertEquals(3, populatedBooks!!.numberOfBooks())
+        }
+    }
     @Nested
     inner class AddBooks {
         @Test
@@ -215,51 +222,4 @@ class BookAPITest {
 
     }
 
-}
-    @Test
-    fun `adding a Book to a populated list adds to ArrayList`(){
-        val newBook = Book("Alien Invasion", 4, 8766, "Sci-Fi", true)
-        assertTrue(populatedBooks!!.add(newBook))
-    }
-
-    @Test
-    fun `adding a Book to an empty list adds to ArrayList`(){
-        val newBook = Book("Johnny Cash Life Story", 1, 21, "bio", false)
-        assertTrue(emptyBooks!!.add(newBook))
-    }
-
-    @Test
-    fun `adding a Book to a populated list adds to ArrayList`(){
-        val newBook = Book("Cary Grant Life", 3, 8777, "Bio", false)
-        assertEquals(5, populatedBooks!!.numberOfBooks())
-        assertTrue(populatedBooks!!.add(newBook))
-        assertEquals(6, populatedBooks!!.numberOfBooks())
-        assertEquals(newBook, populatedBooks!!.findNote(populatedBooks!!.numberOfBooks() - 1))
-    }
-
-    @Test
-    fun `adding a Book to an empty list adds to ArrayList`(){
-        val newBook = Book("Cary Grant Life", 3, 8777, "Bio", false)
-        assertEquals(0, emptyBooks!!.numberOfBooks())
-        assertTrue(emptyBooks!!.add(newBook))
-        assertEquals(1, emptyBooks!!.numberOfBooks())
-        assertEquals(newBook, emptyBooks!!.findNote(emptyBooks!!.numberOfBooks() - 1))
-    }
-
-    @Test
-    fun `listAllNotes returns No Notes Stored message when ArrayList is empty`() {
-        assertEquals(0, emptyBooks!!.numberOfBooks())
-        assertTrue(emptyBooks!!.listAllBooks().lowercase().contains("no books"))
-    }
-
-    @Test
-    fun `listAllBooks returns Notes when ArrayList has notes stored`() {
-        assertEquals(5, populatedBooks!!.numberOfBooks())
-        val booksString = populatedBooks!!.listAllBooks().lowercase()
-        assertTrue(booksString.contains("learning kotlin"))
-        assertTrue(booksString.contains("code app"))
-        assertTrue(booksString.contains("music"))
-        assertTrue(booksString.contains("bio"))
-        assertTrue(booksString.contains("dragon"))
-    }
 }
