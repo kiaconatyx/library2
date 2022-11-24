@@ -18,7 +18,7 @@ fun mainMenu() : Int {
          > ----------------------------------
          > |        Book Depositry APP      |
          > ----------------------------------
-         > | NOTE MENU                      |
+         > | Book Menu                      |
          > |   1) Add a book                |
          > |   2) List all books            |
          > |   3) Update a book             |
