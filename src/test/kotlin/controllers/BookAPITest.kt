@@ -43,6 +43,31 @@ class BookAPITest {
         populatedBooks = null
         emptyBooks = null
     }
+
+    @Nested
+    inner class UpdateNotes {
+        @Test
+        fun `updating a book that does not exist returns false`(){
+            assertFalse(populatedBooks!!.updateBook(6, Book("Updating Book", 2, 999, "howto", false)))
+            assertFalse(populatedBooks!!.updateBook(-1, Book("Updating Book", 2, 999, "howto", false)))
+            assertFalse(emptyBooks!!.updateBook(0, Book("Updating Book", 2, 999, "howto", false)))
+        }
+
+        @Test
+        fun `updating a book that exists returns true and updates`() {
+            //check note 5 exists and check the contents
+            assertEquals(music, populatedBooks!!.findBook(4))
+            assertEquals("music", populatedBooks!!.findBook(4)!!.bookTitle)
+            assertEquals(3, populatedBooks!!.findBook(4)!!.bookPriority)
+            assertEquals("fiction", populatedBooks!!.findBook(4)!!.bookGenre)
+
+            //update note 5 with new information and ensure contents updated successfully
+            assertTrue(populatedBooks!!.updateBook(4, Book("Updating Book", 2, 2111, "fiction", false)))
+            assertEquals("Updating Book", populatedBooks!!.findBook(4)!!.bookTitle)
+            assertEquals(2, populatedBooks!!.findBook(4)!!.bookPriority)
+            assertEquals("bio", populatedBooks!!.findBook(4)!!.bookGenre)
+        }
+    }
     @Nested
     inner class DeleteBooks {
 
