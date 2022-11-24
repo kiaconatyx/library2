@@ -3,6 +3,9 @@ package controllers
 import models.Book
 
 
+private var books = ArrayList<Book>()
+
+
 class BookAPI {
     private var books = ArrayList<Book>()
 
@@ -21,6 +24,7 @@ class BookAPI {
             listOfBooks
         }
     }
+
 
     fun listActiveBooks(): String {
         return if (numberOfActiveBooks() == 0) {
@@ -89,7 +93,6 @@ class BookAPI {
             }
         }
     }
-
 
     fun numberOfBooks(): Int {
         return books.size
