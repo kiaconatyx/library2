@@ -1,16 +1,50 @@
 package controllers
 
 import models.Book
+import persistence.Serializer
 
+class BookAPI(serializerType: Serializer){
 
-private var books = ArrayList<Book>()
+    private var serializer: Serializer = serializerType
 
-
-class BookAPI {
     private var books = ArrayList<Book>()
 
     fun add(book: Book): Boolean {
         return books.add(book)
+    }
+
+    fun deleteBook(indexToDelete: Int): Book? {
+        return if (isValidListIndex(indexToDelete, books)) {
+            books.removeAt(indexToDelete)
+        } else null
+    }
+
+    fun updateBook(indexToUpdate: Int, book: Book?): Boolean {
+        //find the note object by the index number
+        val foundBook = findBook(indexToUpdate)
+
+        //if the note exists, use the note details passed as parameters to update the found note in the ArrayList.
+        if ((foundBook != null) && (book != null)) {
+            foundBook.bookTitle = book.bookTitle
+            foundBook.bookPriority = book.bookPriority
+            foundBook.bookISBN = book.bookISBN
+            foundBook.bookGenre = book.bookGenre
+            return true
+        }
+
+        //if the note was not found, return false, indicating that the update was not successful
+        return false
+    }
+
+    fun archiveBook(indexToArchive: Int): Boolean {
+        if (isValidIndex(indexToArchive)) {
+            val bookToArchive = books[indexToArchive]
+            if (!bookToArchive.isBookArchived) {
+                bookToArchive.isBookArchived = true
+                return true
+            }
+        }
+        return false
     }
 
     fun listAllBooks(): String {
@@ -25,7 +59,6 @@ class BookAPI {
         }
     }
 
-
     fun listActiveBooks(): String {
         return if (numberOfActiveBooks() == 0) {
             "No active books stored"
@@ -33,7 +66,7 @@ class BookAPI {
             var listOfActiveBooks = ""
             for (book in books) {
                 if (!book.isBookArchived) {
-                    listOfActiveBooks += "${books.indexOf(book)}: $book\n"
+                    listOfActiveBooks += "${books.indexOf(book)}: $book \n"
                 }
             }
             listOfActiveBooks
@@ -119,6 +152,7 @@ class BookAPI {
     }
 
     fun numberOfBooksByPriority(priority: Int): Int {
+        //return books.stream().filter { p: Note -> p.notePriority == priority }.count().toInt()
         var counter = 0
         for (book in books) {
             if (book.bookPriority == priority) {
@@ -129,6 +163,7 @@ class BookAPI {
     }
 
     fun numberOfBooksByISBN(ISBN: Int): Int {
+        //return books.stream().filter { p: Note -> p.notePriority == priority }.count().toInt()
         var counter = 0
         for (book in books) {
             if (book.bookISBN == ISBN) {
@@ -149,29 +184,18 @@ class BookAPI {
         return (index >= 0 && index < list.size)
     }
 
-    fun deleteBook(indexToDelete: Int): Book? {
-        return if (isValidListIndex(indexToDelete, books)) {
-            books.removeAt(indexToDelete)
-        } else null
-    }
-
-    fun updateBook(indexToUpdate: Int, book: Book?): Boolean {
-        val foundBook = findBook(indexToUpdate)
-
-
-        if ((foundBook != null) && (book != null)) {
-            foundBook.bookTitle = book.bookTitle
-            foundBook.bookPriority = book.bookPriority
-            foundBook.bookISBN = book.bookISBN
-            foundBook.bookGenre = book.bookGenre
-            return true
-        }
-
-        //if the note was not found, return false, indicating that the update was not successful
-        return false
-    }
-
     fun isValidIndex(index: Int) :Boolean{
         return isValidListIndex(index, books);
     }
+
+    @Throws(Exception::class)
+    fun load() {
+        books = serializer.read() as ArrayList<Book>
+    }
+
+    @Throws(Exception::class)
+    fun store() {
+        serializer.write(books)
+    }
+
 }

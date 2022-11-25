@@ -5,6 +5,9 @@ package controllers
 import models.Book
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import persistence.JSONSerializer
+import persistence.XMLSerializer
+import java.io.File
 import kotlin.test.assertEquals
 
 class BookAPITest {
@@ -14,8 +17,8 @@ class BookAPITest {
     private var codeApp: Book? = null
     private var bio: Book? = null
     private var fantasy: Book? = null
-    private var populatedBooks: BookAPI? = BookAPI()
-    private var emptyBooks: BookAPI? = BookAPI()
+    private var populatedBooks: BookAPI? = BookAPI(XMLSerializer(File("books.xml")))
+    private var emptyBooks: BookAPI? = BookAPI(XMLSerializer(File("books.xml")))
 
     @BeforeEach
     fun setup(){
@@ -45,7 +48,7 @@ class BookAPITest {
     }
 
     @Nested
-    inner class UpdateNotes {
+    inner class Updatebooks {
         @Test
         fun `updating a book that does not exist returns false`(){
             assertFalse(populatedBooks!!.updateBook(6, Book("Updating Book", 2, 999, "howto", false)))
@@ -118,7 +121,7 @@ class BookAPITest {
         }
 
         @Test
-        fun `listAllBooks returns Notes when ArrayList has books stored`() {
+        fun `listAllBooks returns books when ArrayList has books stored`() {
             assertEquals(5, populatedBooks!!.numberOfBooks())
             val booksString = populatedBooks!!.listAllBooks().lowercase()
             assertTrue(booksString.contains("learning kotlin"))
@@ -156,7 +159,7 @@ class BookAPITest {
         }
 
         @Test
-        fun `listArchivedBooks returns archived notes when ArrayList has archived books stored`() {
+        fun `listArchivedBooks returns archived books when ArrayList has archived books stored`() {
             assertEquals(2, populatedBooks!!.numberOfArchivedBooks())
             val archivedBooksString = populatedBooks!!.listArchivedBooks().lowercase()
             assertFalse(archivedBooksString.contains("learning kotlin"))
@@ -175,7 +178,7 @@ class BookAPITest {
 
         @Test
         fun `listBooksBySelectedPriority returns no books when no books of that priority exist`() {
-            //Priority 1 (1 note), 2 (none), 3 (1 note). 4 (2 notes), 5 (1 note)
+            //Priority 1 (1 note), 2 (none), 3 (1 note). 4 (2 books), 5 (1 note)
             assertEquals(5, populatedBooks!!.numberOfBooks())
             val priority2String = populatedBooks!!.listBooksBySelectedPriority(2).lowercase()
             assertTrue(priority2String.contains("no books"))
@@ -183,7 +186,7 @@ class BookAPITest {
         }
 
         @Test
-        fun `listBooksBySelectedPriority returns all notes that match that priority when books of that priority exist`() {
+        fun `listBooksBySelectedPriority returns all books that match that priority when books of that priority exist`() {
             assertEquals(5, populatedBooks!!.numberOfBooks())
             val priority1String = populatedBooks!!.listBooksBySelectedPriority(1).lowercase()
             assertTrue(priority1String.contains("1 book"))
@@ -215,7 +218,7 @@ class BookAPITest {
 
         @Test
         fun `listBooksBySelectedISBN returns no books when no books of that ISBN exist`() {
-            //Priority 1 (1 note), 2 (none), 3 (1 note). 4 (2 notes), 5 (1 note)
+            //Priority 1 (1 note), 2 (none), 3 (1 note). 4 (2 books), 5 (1 note)
             assertEquals(5, populatedBooks!!.numberOfBooks())
             val ISBN2String = populatedBooks!!.listBooksBySelectedISBN(122).lowercase()
             assertTrue(ISBN2String.contains("no books"))
@@ -223,7 +226,7 @@ class BookAPITest {
         }
 
         @Test
-        fun `listBooksBySelectedISBN returns all notes that match that ISBN when books of that ISBN exist`() {
+        fun `listBooksBySelectedISBN returns all books that match that ISBN when books of that ISBN exist`() {
             assertEquals(5, populatedBooks!!.numberOfBooks())
             val ISBN1String = populatedBooks!!.listBooksBySelectedISBN(1935).lowercase()
             assertTrue(ISBN1String.contains("1 book"))
@@ -247,4 +250,41 @@ class BookAPITest {
 
     }
 
+    @Test
+    fun `saving and loading an empty collection in JSON doesn't crash app`() {
+        // Saving an empty books.json file.
+        val storingBooks = BookAPI(JSONSerializer(File("books.json")))
+        storingBooks.store()
+
+        //Loading the empty books.json file into a new object
+        val loadedBooks = BookAPI(JSONSerializer(File("books.json")))
+        loadedBooks.load()
+
+        //Comparing the source of the books (storingbooks) with the json loaded books (loadedbooks)
+        assertEquals(0, storingBooks.numberOfBooks())
+        assertEquals(0, loadedBooks.numberOfBooks())
+        assertEquals(storingBooks.numberOfBooks(), loadedBooks.numberOfBooks())
+    }
+
+    @Test
+    fun `saving and loading an loaded collection in JSON doesn't loose data`() {
+        // Storing 3 books to the books.json file.
+        val storingBooks = BookAPI(JSONSerializer(File("books.json")))
+        storingBooks.add(music!!)
+        storingBooks.add(codeApp!!)
+        storingBooks.add(fantasy!!)
+        storingBooks.store()
+
+        //Loading books.json into a different collection
+        val loadedBooks = BookAPI(JSONSerializer(File("books.json")))
+        loadedBooks.load()
+
+        //Comparing the source of the books (storingbooks) with the json loaded books (loadedbooks)
+        assertEquals(3, storingBooks.numberOfBooks())
+        assertEquals(3, loadedBooks.numberOfBooks())
+        assertEquals(storingBooks.numberOfBooks(), loadedBooks.numberOfBooks())
+        assertEquals(storingBooks.findBook(0), loadedBooks.findBook(0))
+        assertEquals(storingBooks.findBook(1), loadedBooks.findBook(1))
+        assertEquals(storingBooks.findBook(2), loadedBooks.findBook(2))
+    }
 }
