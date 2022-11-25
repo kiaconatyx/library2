@@ -48,7 +48,8 @@ class BookAPITest {
     }
 
     @Nested
-    inner class Updatebooks {
+
+    inner class UpdateNotes {
         @Test
         fun `updating a book that does not exist returns false`(){
             assertFalse(populatedBooks!!.updateBook(6, Book("Updating Book", 2, 999, "howto", false)))

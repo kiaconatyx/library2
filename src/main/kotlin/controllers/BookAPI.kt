@@ -193,9 +193,29 @@ class BookAPI(serializerType: Serializer){
         books = serializer.read() as ArrayList<Book>
     }
 
+
     @Throws(Exception::class)
     fun store() {
         serializer.write(books)
     }
 
+    fun updateBook(indexToUpdate: Int, book: Book?): Boolean {
+        val foundBook = findBook(indexToUpdate)
+
+
+        if ((foundBook != null) && (book != null)) {
+            foundBook.bookTitle = book.bookTitle
+            foundBook.bookPriority = book.bookPriority
+            foundBook.bookISBN = book.bookISBN
+            foundBook.bookGenre = book.bookGenre
+            return true
+        }
+
+        //if the note was not found, return false, indicating that the update was not successful
+        return false
+    }
+
+    fun isValidIndex(index: Int) :Boolean{
+        return isValidListIndex(index, books);
+    }
 }
